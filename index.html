@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7-B MEB Tüm Yıl Soru Bankası Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+            --card-bg: rgba(30, 41, 59, 0.9);
+            --accent-blue: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-gold: #fbbf24;
+            --text-color: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .subtitle { font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px; }
+
+        .timer-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-gold), var(--accent-red));
+            transition: width 1s linear;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .grid-select {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .btn-subject {
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-subject:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        .bg-math { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .bg-fen { background: linear-gradient(135deg, #059669, #047857); }
+        .bg-turkce { background: linear-gradient(135deg, #d97706, #b45309); }
+        .bg-sosyal { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .bg-ing { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+        .bg-din { background: linear-gradient(135deg, #0891b2, #0e7490); }
+
+        .topic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 320px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding-right: 5px;
+        }
+
+        .topic-btn {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topic-btn:hover { background: var(--accent-blue); color: #000; font-weight: bold; }
+
+        .question-card {
+            background: #0f172a;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .question-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 15px; line-height: 1.4; color: #f1f5f9; }
+
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+
+        .option-btn {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover { background: rgba(56, 189, 248, 0.2); border-color: var(--accent-blue); }
+        .option-btn.correct { background: var(--accent-green) !important; color: white !important; font-weight: bold; }
+        .option-btn.wrong { background: var(--accent-red) !important; color: white !important; }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .leaderboard-box {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>7-B Tüm Yıl Soru Bankası</h1>
+        <p class="subtitle">MEB Müfredatı 1. ve 2. Dönem Tüm Konular</p>
+
+        <div class="stats-bar">
+            <div><i class="fa-solid fa-trophy" style="color:var(--accent-gold)"></i> Puan: <span id="scoreText">0</span></div>
+            <div><i class="fa-solid fa-clock" style="color:var(--accent-purple)"></i> Süre: <span id="timerText">15</span>s</div>
+            <div><i class="fa-solid fa-bullseye" style="color:var(--accent-blue)"></i> Soru: <span id="qCountText">0/10</span></div>
+        </div>
+
+        <div class="timer-bar-bg" id="timerBg" style="display:none;">
+            <div class="timer-bar" id="timerBar"></div>
+        </div>
+
+        <!-- EKRAN 1: DERS SEÇİMİ -->
+        <div id="subjectScreen">
+            <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:12px;">Dersini Seç:</p>
+            <div class="grid-select">
+                <button class="btn-subject bg-math" onclick="selectSubject('Matematik')"><i class="fa-solid fa-calculator"></i> Matematik</button>
+                <button class="btn-subject bg-fen" onclick="selectSubject('Fen')"><i class="fa-solid fa-flask"></i> Fen Bilimleri</button>
+                <button class="btn-subject bg-turkce" onclick="selectSubject('Turkce')"><i class="fa-solid fa-book"></i> Türkçe</button>
+                <button class="btn-subject bg-sosyal" onclick="selectSubject('Sosyal')"><i class="fa-solid fa-earth-americas"></i> Sosyal Bilgiler</button>
+                <button class="btn-subject bg-ing" onclick="selectSubject('Ingilizce')"><i class="fa-solid fa-language"></i> İngilizce</button>
+                <button class="btn-subject bg-din" onclick="selectSubject('Din')"><i class="fa-solid fa-moon"></i> Din Kültürü</button>
+            </div>
+
+            <div class="leaderboard-box">
+                <div style="font-weight:bold; color:var(--accent-gold); margin-bottom:8px;"><i class="fa-solid fa-crown"></i> 7-B En Yüksek Skorlar</div>
+                <div id="leaderboardList"></div>
+            </div>
+        </div>
+
+        <!-- EKRAN 2: KONU SEÇİMİ -->
+        <div id="topicScreen" style="display: none;">
+            <button class="back-btn" onclick="showScreen('subjectScreen')"><i class="fa-solid fa-arrow-left"></i> Ders Değiştir</button>
+            <h3 id="topicScreenTitle" style="color:var(--accent-blue); margin-bottom:12px;"></h3>
+            <div class="topic-list" id="topicList"></div>
+        </div>
+
+        <!-- EKRAN 3: SORU EKRANI -->
+        <div id="quizScreen" style="display: none;">
+            <button class="back-btn" onclick="quitQuiz()"><i class="fa-solid fa-arrow-left"></i> Çıkış Yap</button>
+            <div class="question-card">
+                <div class="question-title" id="questionTitle"></div>
+                <div class="options-grid" id="optionsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Web Audio API Ses Üreteci
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(freq, type, duration) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // 10'ar soruluk şablon üreteci (Tüm üniteleri doldurmak için)
+        function makeQuestions(topicName, qArray) {
+            return qArray;
+        }
+
+        const db = {
+            "Matematik": {
+                "1. Ünite: Tam Sayılarla İşlemler": [
+                    { q: "(-12) + (+7) işleminin sonucu kaçtır?", options: ["-5", "+5", "-19", "+19"], answer: 0 },
+                    { q: "(-5) · (-8) işleminin sonucu kaçtır?", options: ["-40", "+40", "-13", "+13"], answer: 1 },
+                    { q: "(+48) / (-6) işleminin sonucu kaçtır?", options: ["+8", "-6", "-8", "+6"], answer: 2 },
+                    { q: "(-2)⁴ üslü ifadesinin değeri kaçtır?", options: ["-16", "+16", "-8", "+8"], answer: 1 },
+                    { q: "Mutlak değeri 9 olan tam sayıların toplamı kaçtır?", options: ["18", "-18", "0", "9"], answer: 2 },
+                    { q: "En büyük negatif tam sayı kaçtır?", options: ["-1", "-9", "0", "-10"], answer: 0 },
+                    { q: "(-15) - (-7) işleminin sonucu kaçtır?", options: ["-22", "-8", "+8", "+22"], answer: 1 },
+                    { q: "[(-24) / 3] + [(-2) · (-3)] işleminin sonucu nedir?", options: ["-2", "-14", "+2", "+14"], answer: 0 },
+                    { q: "Sayı doğrusunda -7 ile +5 arasında kaç tane tam sayı vardır?", options: ["11", "12", "13", "10"], answer: 0 },
+                    { q: "(-1)¹⁰¹ işleminin sonucu kaçtır?", options: ["+1", "-1", "+101", "-101"], answer: 1 }
+                ],
+                "2. Ünite: Rasyonel Sayılar ve İşlemler": [
+                    { q: "-3/4 rasyonel sayısının ondalık gösterimi nedir?", options: ["-0,75", "-0,5", "-0,25", "-0,34"], answer: 0 },
+                    { q: "1/2 + 1/3 işleminin sonucu kaçtır?", options: ["2/5", "5/6", "1/6", "3/5"], answer: 1 },
+                    { q: "3/5 sayısının toplama işlemine göre tersi kaçtır?", options: ["-3/5", "5/3", "-5/3", "3/5"], answer: 0 },
+                    { q: "2 tam 1/4 kesrinin bileşik kesir hali nedir?", options: ["7/4", "9/4", "5/4", "9/2"], answer: 1 },
+                    { q: "0,4 gösteriminin rasyonel sayı en sade hali nedir?", options: ["4/10", "2/5", "1/4", "4/5"], answer: 1 },
+                    { q: "(-3/4) · (2/3) çarpımının sonucu kaçtır?", options: ["-1/2", "+1/2", "-6/7", "+6/7"], answer: 0 },
+                    { q: "3/4 - 1/2 işleminin sonucu kaçtır?", options: ["1/4", "1/2", "2/4", "1/8"], answer: 0 },
+                    { q: "Devirli ondalık gösterim 0,(3) kaça eşittir?", options: ["1/3", "3/9", "3/10", "1/9"], answer: 0 },
+                    { q: "(1/2) / (1/4) işleminin sonucu kaçtır?", options: ["1/8", "2", "4", "1/2"], answer: 1 },
+                    { q: "(-2/3)² üslü ifadesinin değeri kaçtır?", options: ["-4/9", "+4/9", "-2/9", "+2/9"], answer: 1 }
+                ],
+                "3. Ünite: Cebirsel İfadeler ve Denklemler": [
+                    { q: "3x - 5 ifadesinin katsayıları toplamı kaçtır?", options: ["-2", "-5", "3", "8"], answer: 0 },
+                    { q: "2(x + 4) ifadesinin eşiti nedir?", options: ["2x + 4", "2x + 8", "x + 8", "2x + 6"], answer: 1 },
+                    { q: "5x - 3 + 2x + 7 ifadesinin en sade hali nedir?", options: ["7x + 4", "7x - 4", "5x + 10", "7x + 10"], answer: 0 },
+                    { q: "x = 3 için 4x - 5 ifadesinin değeri kaçtır?", options: ["7", "12", "17", "9"], answer: 0 },
+                    { q: "3x + 5 = 20 denklemini sağlayan x kaçtır?", options: ["3", "5", "7", "15"], answer: 1 },
+                    { q: "2(x - 3) = 10 denklemini sağlayan x kaçtır?", options: ["4", "5", "8", "7"], answer: 2 },
+                    { q: "Hangi sayının 4 katının 7 fazlası 31'dir?", options: ["5", "6", "7", "8"], answer: 1 },
+                    { q: "5x - 4 = 2x + 11 denklemini sağlayan x kaçtır?", options: ["3", "5", "7", "4"], answer: 1 },
+                    { q: "7x - (2x - 4) işleminin sonucu nedir?", options: ["5x - 4", "5x + 4", "9x - 4", "9x + 4"], answer: 1 },
+                    { q: "x / 3 + 2 = 7 denklemini sağlayan x kaçtır?", options: ["15", "12", "9", "21"], answer: 0 }
+                ],
+                "4. Ünite: Oran, Orantı ve Yüzdeler": [
+                    { q: "12 litrelik limonata için 3 kg şeker gerekiyorsa, 36 litre için kaç kg şeker gerekir?", options: ["6", "9", "12", "15"], answer: 1 },
+                    { q: "3 işçinin 12 günde yaptığı işi 9 işçi kaç günde yapar?", options: ["4", "36", "6", "8"], answer: 0 },
+                    { q: "400 TL %20 indirimle kaç TL'ye satılır?", options: ["320", "350", "380", "300"], answer: 0 },
+                    { q: "Etiket fiyatı 150 TL olan ürün 180 TL'ye satılırsa yüzde kaç kar edilmiştir?", options: ["%10", "%20", "%25", "%30"], answer: 1 },
+                    { q: "60 sayısının %15'i kaçtır?", options: ["9", "12", "15", "18"], answer: 0 },
+                    { q: "Hangi sayının %20'si 50'dir?", options: ["200", "250", "300", "150"], answer: 1 },
+                    { q: "200 TL'ye alınan ürün %30 karla kaç TL'ye satılır?", options: ["230", "260", "280", "300"], answer: 1 },
+                    { q: "A ve B ters orantılıdır. A=2 iken B=12 ise A=4 iken B kaçtır?", options: ["6", "3", "24", "48"], answer: 0 },
+                    { q: "Bir okuldaki kız/erkek oranı 3/5'tir. Mevcut 320 ise kız sayısı kaçtır?", options: ["120", "200", "160", "140"], answer: 0 },
+                    { q: "Bir mal %20 zararla 160 TL'ye satılıyorsa alış fiyatı kaç TL'dir?", options: ["180", "200", "220", "240"], answer: 1 }
+                ],
+                "5. Ünite: Doğrular, Açılar ve Çokgenler": [
+                    { q: "Tümler iki açıdan biri 35° ise diğeri kaç derecedir?", options: ["55", "145", "65", "90"], answer: 0 },
+                    { q: "Bütünler iki açıdan biri 70° ise diğeri kaç derecedir?", options: ["20", "110", "120", "100"], answer: 1 },
+                    { q: "Düzgün altıgenin bir dış açısı kaç derecedir?", options: ["60", "120", "90", "45"], answer: 0 },
+                    { q: "İç açılarının toplamı 540° olan çokgen kaç kenarlıdır?", options: ["5", "6", "7", "8"], answer: 0 },
+                    { q: "Paralel iki doğrunun kesenle yaptığı yöndeş açılar nasıldır?", options: ["Eşittir", "Toplamı 180°", "Toplamı 90°", "Biri diğerinin 2 katı"], answer: 0 },
+                    { q: "Çapı 20 cm olan dairenin alanı nedir? (Pi=3)", options: ["300", "120", "600", "150"], answer: 0 },
+                    { q: "Merkez açısı 60° olan daire diliminin alanı tüm dairenin kaçta kaçıdır?", options: ["1/3", "1/6", "1/4", "1/2"], answer: 1 },
+                    { q: "Yarıçapı 7 cm olan çemberin çevresi kaçtır? (Pi=22/7)", options: ["22", "44", "88", "14"], answer: 1 },
+                    { q: "Paralelkenarın alanı hangisiyle bulunur?", options: ["Taban x Yükseklik", "Taban x Yükseklik / 2", "Köşegenler çarpımı", "Çevre / 2"], answer: 0 },
+                    { q: "Çevre uzunluğu 60 cm olan çemberin yarıçapı kaçtır? (Pi=3)", options: ["5", "10", "20", "15"], answer: 1 }
+                ],
+                "6. Ünite: Veri Analizi ve Görünüm": [
+                    { q: "En büyük değer ile en küçük değer arasındaki farka ne denir?", options: ["Açıklık", "Ortalama", "Mod", "Medyan"], answer: 0 },
+                    { q: "7, 12, 15, 12, 9 veri grubunun modu kaçtır?", options: ["12", "7", "9", "15"], answer: 0 },
+                    { q: "4, 8, 12, 16 veri grubunun aritmetik ortalaması kaçtır?", options: ["10", "8", "12", "14"], answer: 0 },
+                    { q: "Aritmetik ortalamayı bulmak için toplam neye bölünür?", options: ["Veri sayısına", "Açıklığa", "En büyük değere", "Moda"], answer: 0 },
+                    { q: "Daire grafiği toplam kaç derecelik açıyla gösterilir?", options: ["360°", "180°", "90°", "100°"], answer: 0 },
+                    { q: "Çizgi grafiği en çok nerede kullanılır?", options: ["Zamandaki değişimlerde", "Kategori karşılaştırmasında", "Nüfus sayımında", "Tekil verilerde"], answer: 0 },
+                    { q: "Sütun grafiğinin temel amacı nedir?", options: ["Karşılaştırma yapmak", "Değişimi izlemek", "Parça-bütün ilişkisi", "Ortalama bulmak"], answer: 0 },
+                    { q: "Ortanca (Medyan) bulmak için veriler önce nasıl dizilir?", options: ["Küçükten büyüğe", "Rastgele", "Büyükten küçüğe", "Fark etmez"], answer: 0 },
+                    { q: "Veri sayısı çift ise medyan nasıl bulunur?", options: ["Ortadaki iki verinin ortalamasıyla", "En büyük veriyle", "En küçük veriyle", "Mod ile"], answer: 0 },
+                    { q: "Küpün tabana paralel kesitinin görünümü nasıldır?", options: ["Kare", "Üçgen", "Daire", "Dikdörtgen"], answer: 0 }
+                ]
+            },
+            "Fen": {
+                "1. Ünite: Güneş Sistemi ve Ötesi": [
+                    { q: "Güneş'e en yakın gezegen hangisidir?", options: ["Merkür", "Venüs", "Mars", "Dünya"], answer: 0 },
+                    { q: "Güneş sistemindeki en büyük gezegen hangisidir?", options: ["Jüpiter", "Satürn", "Uranüs", "Neptün"], answer: 0 },
+                    { q: "Yıldızların doğduğu toz ve gaz bulutlarına ne denir?", options: ["Bulutsu (Nebula)", "Galaksi", "Karadelik", "Meteor"], answer: 0 },
+                    { q: "Astronomi alanında ilk gözlemevini kuran Müslüman bilim insanı kimdir?", options: ["Uluğ Bey", "Ali Kuşçu", "Harezmi", "İbni Sina"], answer: 0 },
+                    { q: "Samanyolu hangi tür galaksidir?", options: ["Sarmal", "Eliptik", "Düzensiz", "Küresel"], answer: 0 },
+                    { q: "Dünyaya en yakın yıldız hangisidir?", options: ["Güneş", "Kutup Yıldızı", "Sirius", "Alpha Centauri"], answer: 0 },
+                    { q: "Atmosfere giren gök taşlarına ne denir?", options: ["Meteor", "Meteorit", "Asteroit", "Kuyruklu yıldız"], answer: 0 },
+                    { q: "İç (karasal) gezegenler arasında hangisi yoktur?", options: ["Satürn", "Merkür", "Venüs", "Mars"], answer: 0 },
+                    { q: "Halkasıyla bilinen dev gezegen hangisidir?", options: ["Satürn", "Jüpiter", "Mars", "Neptün"], answer: 0 },
+                    { q: "Uydusu olmayan gezegenler hangileridir?", options: ["Merkür ve Venüs", "Mars ve Jüpiter", "Dünya ve Mars", "Satürn ve Uranüs"], answer: 0 }
+                ],
+                "2. Ünite: Hücre ve Bölünmeler": [
+                    { q: "Bitki hücresinde bulunup hayvan hücresinde olmayan organel hangisidir?", options: ["Kloroplast", "Mitokondri", "Ribozom", "Çekirdek"], answer: 0 },
+                    { q: "Hücrenin yönetim merkezi neresidir?", options: ["Çekirdek", "Sitoplazma", "Hücre zarı", "Koful"], answer: 0 },
+                    { q: "Mitoz bölünme sonucunda kaç yeni hücre oluşur?", options: ["2", "1", "4", "8"], answer: 0 },
+                    { q: "Mayoz bölünme hangi hücrelerde görülür?", options: ["Üreme ana hücrelerinde", "Vücut hücrelerinde", "Sinir hücrelerinde", "Kas hücrelerinde"], answer: 0 },
+                    { q: "Kanser, hangi bölünmenin kontrolsüz gerçekleşmesiyle oluşur?", options: ["Mitoz", "Mayoz", "Sitoz", "Kardiyoz"], answer: 0 },
+                    { q: "İnsan üreme hücrelerindeki (sperm/yumurta) kromozom sayısı kaçtır?", options: ["23", "46", "92", "44"], answer: 0 },
+                    { q: "Parça değişimi (Krossing-over) hangi bölünmede olur?", options: ["Mayoz", "Mitoz", "İkisi de", "Hiçbiri"], answer: 0 },
+                    { q: "Protein sentezinden sorumlu organel hangisidir?", options: ["Ribozom", "Lizozom", "Golgi", "Endoplazmik Retikulum"], answer: 0 },
+                    { q: "Hücre zarı nasıl bir yapıya sahiptir?", options: ["Seçici-geçirgen ve canlı", "Cansız ve sert", "Tam geçirgen", "Hareketsiz"], answer: 0 },
+                    { q: "Hücrenin enerji santrali hangi organeldir?", options: ["Mitokondri", "Kloroplast", "Ribozom", "Lizozom"], answer: 0 }
+                ],
+                "3. Ünite: Kuvvet ve Enerji": [
+                    { q: "Kütlesi 5 kg olan cisme etki eden yerçekimi kuvveti kaç N'dur? (g=10)", options: ["50 N", "5 N", "0.5 N", "500 N"], answer: 0 },
+                    { q: "İşin birimi aşağıdakilerden hangisidir?", options: ["Joule", "Watt", "Newton", "Pascal"], answer: 0 },
+                    { q: "Kinetik enerji hangi niceliklere bağlıdır?", options: ["Sürat ve kütle", "Yükseklik ve kütle", "Sadece yükseklik", "Sıcaklık ve kütle"], answer: 0 },
+                    { q: "Çekim potansiyel enerjisi hangisine bağlı değildir?", options: ["Sürat", "Kütle", "Yükseklik", "Yerçekimi ivmesi"], answer: 0 },
+                    { q: "Sürtünmesiz ortamda mekanik enerji nasıldır?", options: ["Korunur", "Sürekli azalır", "Artar", "Sıfır olur"], answer: 0 },
+                    { q: "Bir cisme kuvvet uygulanıyor ama cisim hareket etmiyorsa fiziksel anlamda iş yapılır mı?", options: ["Yapılmaz", "Yapılır", "Kısmen yapılır", "Kütleye bağlıdır"], answer: 0 },
+                    { q: "Esneklik potansiyel enerjisi hangisinde bulunur?", options: ["Sıkışmış yayda", "Hareket eden arabada", "Yüksekteki taşta", "Duran kutuda"], answer: 0 },
+                    { q: "Sürtünme kuvveti ısı enerjisine dönüşür mü?", options: ["Evet", "Hayır", "Bazen", "Sadece sıvılarda"], answer: 0 },
+                    { q: "Dinamometre neyi ölçer?", options: ["Kuvvet / Ağırlık", "Kütle", "Hacim", "Sıcaklık"], answer: 0 },
+                    { q: "Kütle eşit kollu terazi ile ölçülür ve birimi nedir?", options: ["Kilogram (kg)", "Newton (N)", "Joule (J)", "Watt (W)"], answer: 0 }
+                ],
+                "4. Ünite: Saf Madde ve Karışımlar": [
+                    { q: "Aşağıdakilerden hangisi saf maddedir?", options: ["Altın", "Hava", "Kolonya", "Tuzlu su"], answer: 0 },
+                    { q: "Kum + Su karışımı hangi yöntemle ayrılır?", options: ["Süzme", "Damıtma", "Mıknatıslanma", "Buharlaştırma"], answer: 0 },
+                    { q: "Şekerli su karışımı nasıl bir karışımdır?", options: ["Homojen", "Heterojen", "Emülsiyon", "Süspansiyon"], answer: 0 },
+                    { q: "Çözünme hızını artırmak için hangisi yapılmaz?", options: ["Sıcaklığı düşürmek", "Karıştırmak", "Temas yüzeyini artırmak", "Sıcaklığı artırmak"], answer: 0 },
+                    { q: "Alkol + Su karışımı hangi yöntemle ayrılır?", options: ["Ayrımsal damıtma", "Süzme", "Savurma", "Mıknatıslanma"], answer: 0 },
+                    { q: "Sembolü 'Na' olan element hangisidir?", options: ["Sodyum", "Azot", "Nikel", "Neon"], answer: 0 },
+                    { q: "Formülü 'H₂O' olan bileşik hangisidir?", options: ["Su", "Tuz", "Karbondioksit", "Amonyak"], answer: 0 },
+                    { q: "Geri dönüşümün temel amacı nedir?", options: ["Doğal kaynakları korumak", "Çöp biriktirmek", "Maliyeti artırmak", "Sanayiyi yavaşlatmak"], answer: 0 },
+                    { q: "Aşağıdakilerden hangisi bir bileşiktir?", options: ["Tuz (NaCl)", "Demir (Fe)", "Oksijen (O₂)", "Altın (Au)"], answer: 0 },
+                    { q: "Zeytinyağı + Su karışımı hangi araçla ayrılır?", options: ["Ayırma hunisi", "Süzgeç", "Mıknatıs", "Evaporatör"], answer: 0 }
+                ],
+                "5. Ünite: Işığın Madde ile Etkileşimi": [
+                    { q: "Aynalarda görüntü oluşumu hangi olayla gerçekleşir?", options: ["Işığın yansıması", "Işığın kırılması", "Işığın soğurulması", "Işığın yayılması"], answer: 0 },
+                    { q: "Odak noktası olan ve görüntüyü devasa büyütebilen ayna hangisidir?", options: ["Çukur ayna", "Düz ayna", "Tümsek ayna", "Hiçbiri"], answer: 0 },
+                    { q: "Güvenlik aynası (araba altı, viraj) olarak kullanılan ayna hangisidir?", options: ["Tümsek ayna", "Çukur ayna", "Düz ayna", "Prizma"], answer: 0 },
+                    { q: "Siyah giysilerin yazın sıcak tutmasının sebebi nedir?", options: ["Işığı soğurması", "Işığı yansıtması", "Işığı kırması", "Geçirgen olması"], answer: 0 },
+                    { q: "Işığın az yoğundan çok yoğun ortama geçerken doğrultu değiştirmesine ne denir?", options: ["Kırılma", "Yansıma", "Soğurulma", "Tam yansıma"], answer: 0 },
+                    { q: "İnce kenarlı mercek ışık ışınlarını ne yapar?", options: ["Toplar", "Dağıtır", "Yansıtır", "Soğurur"], answer: 0 },
+                    { q: "Miyop göz kusuru hangi mercekle düzeltilir?", options: ["Kalın kenarlı mercek", "İnce kenarlı mercek", "Çukur ayna", "Düz cam"], answer: 0 },
+                    { q: "Hipermetrop göz kusuru hangi mercekle düzeltilir?", options: ["İnce kenarlı mercek", "Kalın kenarlı mercek", "Tümsek ayna", "Prizma"], answer: 0 },
+                    { q: "Beyaz ışık prizmadan geçince hangi renklere ayrılır?", options: ["Tayf renklerine (Kırmızıdan Mora)", "Sadece Siyah-Beyaz", "Mavi-Yeşil", "Sarı-Kırmızı"], answer: 0 },
+                    { q: "Güneş enerjisi ile çalışan sistemler hangisidir?", options: ["Güneş paneli ve ocakları", "Rüzgar türbini", "Nükleer santral", "Dizel motor"], answer: 0 }
+                ],
+                "6. Ünite: Canlılarda Üreme, Büyüme ve Gelişme": [
+                    { q: "Çiçekli bitkilerde erkek üreme organının Polen üreten kısmı hangisidir?", options: ["Başçık (Anter)", "Dişicik tepesi", "Çanak yaprak", "Taç yaprak"], answer: 0 },
+                    { q: "Polenlerin dişicik tepesine taşınması olayına ne denir?", options: ["Tozlaşma", "Döllenme", "Çimlenme", "Başkalaşım"], answer: 0 },
+                    { q: "Sperm ve yumurtanın birleşmesi sonucu oluşan yapıya ne denir?", options: ["Zigot", "Embriyo", "Fetüs", "Bebek"], answer: 0 },
+                    { q: "Kurbağa ve kelebeklerde görülen gelişim evresine ne denir?", options: ["Başkalaşım (Metamorfoz)", "Çimlenme", "Tomurcuklanma", "Bölünme"], answer: 0 },
+                    { q: "Tohumun çimlenmesi için hangisi gerekli değildir?", options: ["Işık", "Su (Nem)", "Oksijen", "Uygun sıcaklık"], answer: 0 },
+                    { q: "Vejetatif üreme hangi canlılarda görülür?", options: ["Bitkilerde", "Hayvanlarda", "Bakterilerde", "Mantarlarda"], answer: 0 },
+                    { q: "Tomurcuklanarak üreyen canlıya örnek hangisidir?", options: ["Bira mayası / Hidra", "Amip", "Öglena", "İnsan"], answer: 0 },
+                    { q: "Bölünerek üreme en çok hangi canlılarda olur?", options: ["Bakteri ve Amip", "Bitki", "Kuş", "Memeli"], answer: 0 },
+                    { q: "Yenilenme (Rejenerasyon) ile üremeye örnek hangisidir?", options: ["Denizyıldızı", "Kertenkele (kuyruk kopması üreme değildir)", "İnsan", "Kuş"], answer: 0 },
+                    { q: "Fetüsün anne karnında geliştiği organ hangisidir?", options: ["Döl yatağı (Uterus)", "Yumurta kanalı", "Vajina", "Yumurtalık"], answer: 0 }
+                ]
+            },
+            "Din": {
+                "1. Ünite: Melekler ve Ahiret İnancı": [
+                    { q: "Vahiy getirmekle görevli melek hangisidir?", options: ["Cebrail", "Mikail", "İsrafil", "Azrail"], answer: 0 },
+                    { q: "Doğa olaylarını düzenleyen melek hangisidir?", options: ["Mikail", "Cebrail", "Azrail", "İsrafil"], answer: 0 },
+                    { q: "Sura üfleyecek melek hangisidir?", options: ["İsrafil", "Mikail", "Azrail", "Cebrail"], answer: 0 },
+                    { q: "Can almakla görevli melek kimdir?", options: ["Azrail", "Cebrail", "Mikail", "İsrafil"], answer: 0 },
+                    { q: "Sevab ve günahları yazan meleklere ne denir?", options: ["Kiramen Katibin", "Münker Nekir", "Hafaza", "Zebani"], answer: 0 },
+                    { q: "Kabirde soru soran melekler hangileridir?", options: ["Münker ve Nekir", "Kiramen Katibin", "Harut ve Marut", "Zebani"], answer: 0 },
+                    { q: "Dirilişten sonra toplanılacak alana ne denir?", options: ["Mahşer", "Mizan", "Sırat", "Berzah"], answer: 0 },
+                    { q: "Kabir hayatına ne ad verilir?", options: ["Berzah", "Mahşer", "Mizan", "Ba's"], answer: 0 },
+                    { q: "Günah ve sevapların tartıldığı ameller terazisine ne denir?", options: ["Mizan", "Sırat", "Mahşer", "Kevser"], answer: 0 },
+                    { q: "Yeniden dirilmeye ne ad verilir?", options: ["Ba's", "Haşır", "Berzah", "Tecrit"], answer: 0 }
+                ],
+                "2. Ünite: Hac ve Kurban": [
+                    { q: "Hac ibadeti hangi ayda yapılır?", options: ["Zilhicce", "Ramazan", "Recep", "Şaban"], answer: 0 },
+                    { q: "Kabe'nin etrafında 7 defa dönmeye ne denir?", options: ["Tavaf", "Şavt", "Sa'y", "İhram"], answer: 0 },
+                    { q: "Tavaftaki her bir dönüşe ne ad verilir?", options: ["Şavt", "Tavaf", "Sa'y", "Vakfe"], answer: 0 },
+                    { q: "Safa ile Merve tepeleri arasında 7 kez gidip gelmeye ne denir?", options: ["Sa'y", "Tavaf", "Vakfe", "İhram"], answer: 0 },
+                    { q: "Haccın en önemli farzı olan Arafat'ta durmaya ne denir?", options: ["Vakfe", "Tavaf", "İhram", "Sa'y"], answer: 0 },
+                    { q: "Hac giysisine ne ad verilir?", options: ["İhram", "Kisve", "Cübbe", "Mina"], answer: 0 },
+                    { q: "Kurban kesmenin dini hükmü nedir?", options: ["Vacip", "Farz", "Sünnet", "Müstahap"], answer: 0 },
+                    { q: "Koyun/keçi kurban edilmek için kaç yaşını doldurmalıdır?", options: ["1", "2", "3", "5"], answer: 0 },
+                    { q: "Büyükbaş hayvana en fazla kaç kişi ortak olabilir?", options: ["7", "5", "3", "9"], answer: 0 },
+                    { q: "Kurban etinin fakirlere dağıtılması tavsiye edilen miktarı nedir?", options: ["1/3'ü", "1/2'si", "Tamamı", "1/4'ü"], answer: 0 }
+                ],
+                "3. Ünite: Ahlaki Davranışlar": [
+                    { q: "Peygamberimizin 'Güzel ahlakı tamamlamak için gönderildim' sözü neyi vurgular?", options: ["Ahlakın önemini", "Zenginliği", "Sadece ibadeti", "Savaşı"], answer: 0 },
+                    { q: "Başkasının gizli kusurlarını araştırmaya ne denir?", options: ["Tecessüs", "Gıybet", "Haset", "Riya"], answer: 0 },
+                    { q: "Birinin arkasından hoşlanmayacağı şeyleri konuşmaya ne denir?", options: ["Gıybet", "İftira", "Haset", "Kibir"], answer: 0 },
+                    { q: "Birine yapmadığı suçu yüklemeye ne denir?", options: ["İftira", "Gıybet", "Haset", "Yalan"], answer: 0 },
+                    { q: "Başkasının sahip olduğu nimeti çekememeye ne denir?", options: ["Haset (Kıskançlık)", "Gıybet", "Riya", "Kibir"], answer: 0 },
+                    { q: "İbadetleri gösteriş için yapmaya ne ad verilir?", options: ["Riya", "İhlas", "Tevazu", "Haset"], answer: 0 },
+                    { q: "İbadet ve davranışlarda sırf Allah rızasını gözetmeye ne denir?", options: ["İhlas", "Riya", "Kibir", "Tecessüs"], answer: 0 },
+                    { q: "Kendini başkalarından üstün görme hastalığına ne denir?", options: ["Kibir", "Tevazu", "İhlas", "Gıybet"], answer: 0 },
+                    { q: "Alçakgönüllü olmaya ne ad verilir?", options: ["Tevazu", "Kibir", "Riya", "Haset"], answer: 0 },
+                    { q: "Verdiği sözde durmak hangi ahlaki ilkedir?", options: ["Ahit de vefa (Güvenilirlik)", "Cömertlik", "Tevazu", "Adalet"], answer: 0 }
+                ],
+                "4. Ünite: Hz. Muhammed'in Örnekliği": [
+                    { q: "Peygamberimizin lakabı olan 'El-Emin' ne anlama gelir?", options: ["Güvenilir insan", "Zengin insan", "Cesur lider", "Güçlü komutan"], answer: 0 },
+                    { q: "Peygamberimizin kararlarını arkadaşlarıyla danışarak almasına ne denir?", options: ["İstişare", "Adalet", "Tevazu", "Vahiy"], answer: 0 },
+                    { q: "Peygamberimizin insanlara değer vermesinin kanıtı hangisidir?", options: ["Herkese nazik ve adil davranması", "Yalnız yaşaması", "Sadece akrabalarını koruması", "Zenginleri kayırması"], answer: 0 },
+                    { q: "Peygamberimizin merhametli oluşuna örnek hangisidir?", options: ["Çocukları ve hayvanları çok sevmesi", "Sadece savaşması", "Sert konuşması", "Kimseyle görüşmemesi"], answer: 0 },
+                    { q: "Peygamberimizin hakka ve adalete verdiği önemi gösteren olay hangisidir?", options: ["Hılfu'l Fudul (Erdemliler Topluluğu)", "Hicret", "Taif seferi", "Bedir savaşı"], answer: 0 }
+                ],
+                "5. Ünite: İslam Düşüncesinde Yorumlar": [
+                    { q: "Dini anlayışlardaki farklı görüş ve mezheplere ne ad verilir?", options: ["Yorum / Mezhep", "Ayet", "Hadis", "Sünnet"], answer: 0 },
+                    { q: "Fıkhi (ameli) yorumlardan biri hangisidir?", options: ["Hanefi / Şafii", "Eş'ari", "Maturidi", "Tasavvuf"], answer: 0 },
+                    { q: "İnançla (Akaid) ilgili yorumlardan biri hangisidir?", options: ["Maturidilik", "Hanefilik", "Malikilik", "Hanbelilik"], answer: 0 },
+                    { q: "Tasavvufi yorumlardan biri hangisidir?", options: ["Mevlevilik / Alevilik", "Hanefilik", "Şafiilik", "Maturidilik"], answer: 0 },
+                    { q: "Alevi-Bektaşi kültüründe ibadet yapılan yere ne denir?", options: ["Cemevi", "Cami", "Mescid", "Madrasa"], answer: 0 }
+                ]
+            },
+            "Ingilizce": {
+                "Unit 1: Appearance and Personality": [
+                    { q: "'He always tells the truth.' ifadesine uyan sıfat hangisidir?", options: ["Honest", "Lazy", "Clumsy", "Selfish"], answer: 0 },
+                    { q: "'Cömert' kelimesinin İngilizce karşılığı hangisidir?", options: ["Generous", "Stingy", "Stubborn", "Punctual"], answer: 0 },
+                    { q: "'Zamanında gelen, dakik' kimseye ne denir?", options: ["Punctual", "Lazy", "Clumsy", "Outgoing"], answer: 0 },
+                    { q: "'İnatçı' kelimesinin karşılığı nedir?", options: ["Stubborn", "Kind", "Easy-going", "Smart"], answer: 0 },
+                    { q: "'Sessiz ve utangaç' biri için hangisi kullanılır?", options: ["Shy and quiet", "Talkative", "Outgoing", "Friendly"], answer: 0 },
+                    { q: "'Kibar ve nazik' kişilere ne denir?", options: ["Polite", "Rude", "Selfish", "Clumsy"], answer: 0 },
+                    { q: "'Sakardır, sürekli eşyaları düşürür' ifadesi hangisidir?", options: ["Clumsy", "Smart", "Hardworking", "Punctual"], answer: 0 },
+                    { q: "Dış görünüş sorulurken hangi soru kalıbı kullanılır?", options: ["What does he look like?", "What is he like?", "What does he do?", "How is he?"], answer: 0 },
+                    { q: "Kişilik sorulurken hangi soru sorulur?", options: ["What is he like?", "What does he look like?", "Where is he?", "Who is he?"], answer: 0 },
+                    { q: "'Bencil' kelimesinin karşılığı nedir?", options: ["Selfish", "Generous", "Kind", "Honest"], answer: 0 }
+                ],
+                "Unit 2: Sports": [
+                    { q: "Hangi spor 'individual' (bireysel) spordur?", options: ["Archery", "Football", "Basketball", "Volleyball"], answer: 0 },
+                    { q: "Hangisi 'outdoor' (açık alan) sporu değildir?", options: ["Bowling", "Trekking", "Climbing", "Cycling"], answer: 0 },
+                    { q: "Düzenli egzersiz yapmak anlamındaki kalıp hangisidir?", options: ["Do exercise", "Eat junk food", "Sleep early", "Watch TV"], answer: 0 },
+                    { q: "'Draw' sporda ne anlama gelir?", options: ["Berabere kalmak", "Kazanmak", "Kaybetmek", "Sakatlanmak"], answer: 0 },
+                    { q: "'Spectator' kelimesinin anlamı nedir?", options: ["Seyirci", "Oyuncu", "Hakem", "Koç"], answer: 0 },
+                    { q: "Hangisi takım spordur (Team sport)?", options: ["Handball", "Tennis", "Skiing", "Swimming"], answer: 0 },
+                    { q: "'Medal' ne anlama gelir?", options: ["Madalya", "Kupa", "Skor", "Saha"], answer: 0 },
+                    { q: "'Train hard' ne demektir?", options: ["Sıkı antrenman yapmak", "Trende seyahat etmek", "Dinlenmek", "Yemek yemek"], answer: 0 },
+                    { q: "'Equipment' ne anlama gelir?", options: ["Ekipman / Malzeme", "Saha", "Takım", "Antrenör"], answer: 0 },
+                    { q: "'How often do you train?' sorusu neyi sorar?", options: ["Ne sıklıkla antrenman yaparsın?", "Nerede yaparsın?", "Kiminle yaparsın?", "Saat kaçta yaparsın?"], answer: 0 }
+                ],
+                "Unit 3: Biographies": [
+                    { q: "Geçmiş zaman (Past Simple) sorusu hangisiyle sorulur?", options: ["Did you...?", "Do you...?", "Are you...?", "Will you...?"], answer: 0 },
+                    { q: "'Doğmak' anlamına gelen kalıp hangisidir?", options: ["Be born", "Die", "Grow up", "Graduate"], answer: 0 },
+                    { q: "'Mezun olmak' kelimesinin İngilizcesi nedir?", options: ["Graduate", "Move", "Marry", "Retire"], answer: 0 },
+                    { q: "'Emekli olmak' anlamına gelen kelime hangisidir?", options: ["Retire", "Work", "Earn", "Win"], answer: 0 },
+                    { q: "'Evlenmek' anlamına gelen kalıp nedir?", options: ["Get married", "Get a job", "Move", "Die"], answer: 0 },
+                    { q: "'Taşınmak' kelimesinin karşılığı nedir?", options: ["Move to", "Stay", "Live", "Visit"], answer: 0 },
+                    { q: "'Ödül kazanmak' ifadesi hangisidir?", options: ["Win a prize", "Lose a prize", "Give a prize", "Buy a prize"], answer: 0 },
+                    { q: "'Büyümek, yetişmek' anlamına gelen phrasal verb nedir?", options: ["Grow up", "Get up", "Wake up", "Look up"], answer: 0 },
+                    { q: "Geçmiş zamanda 'go' fiilinin 2. hali nedir?", options: ["Went", "Gone", "Goes", "Going"], answer: 0 },
+                    { q: "Geçmiş zamanda 'have' fiilinin 2. hali nedir?", options: ["Had", "Has", "Haved", "Having"], answer: 0 }
+                ],
+                "Unit 4: Wild Animals": [
+                    { q: "'Vahşi hayvanlar' ifadesinin İngilizcesi nedir?", options: ["Wild animals", "Pets", "Farm animals", "Sea creatures"], answer: 0 },
+                    { q: "'Otobur' (sadece ot yiyen) hayvana ne denir?", options: ["Herbivore", "Carnivore", "Omnivore", "Reptile"], answer: 0 },
+                    { q: "'Etobur' (et yiyen) hayvana ne denir?", options: ["Carnivore", "Herbivore", "Omnivore", "Mammal"], answer: 0 },
+                    { q: "'Soyu tükenmiş' anlamına gelen kelime nedir?", options: ["Extinct", "Endangered", "Alive", "Safe"], answer: 0 },
+                    { q: "'Nesli tehlikede' olan hayvanlar için hangisi kullanılır?", options: ["Endangered", "Extinct", "Dangerous", "Huge"], answer: 0 },
+                    { q: "'Habitat' ne anlama gelir?", options: ["Doğal yaşam alanı", "Kafes", "Hayvanat bahçesi", "Orman yangını"], answer: 0 },
+                    { q: "'Reptile' hangi tür hayvandır?", options: ["Sürüngen", "Memeli", "Kuş", "Balık"], answer: 0 },
+                    { q: "'Mammal' ne demektir?", options: ["Memeli hayvan", "Sürüngen", "Böcek", "Kuş"], answer: 0 },
+                    { q: "'Prey' kelimesinin anlamı nedir?", options: ["Av", "Avcı", "Kafes", "Tehlike"], answer: 0 },
+                    { q: "Hayvanları korumak için ne yapmalıyız?", options: ["Protect their habitats", "Cut down trees", "Hunt them", "Pollute rivers"], answer: 0 }
+                ],
+                "Unit 5: Television": [
+                    { q: "'Belgesel' kelimesinin İngilizce karşılığı nedir?", options: ["Documentary", "Sitcom", "Soap opera", "Commercial"], answer: 0 },
+                    { q: "'Reklamlar' anlamına gelen kelime hangisidir?", options: ["Commercials", "News", "Quiz show", "Series"], answer: 0 },
+                    { q: "'Uzaktan kumanda' nedir?", options: ["Remote control", "Screen", "Couch potato", "Director"], answer: 0 },
+                    { q: "TV karşısından kalkmayan 'tembel' kişiye ne denir?", options: ["Couch potato", "TV addict", "Director", "Viewer"], answer: 0 },
+                    { q: "'Yarışma programı' hangisidir?", options: ["Quiz show", "Discussion", "Cartoon", "Movie"], answer: 0 },
+                    { q: "'Çizgi film' anlamına gelen kelime nedir?", options: ["Cartoon", "News", "Documentary", "Weather forecast"], answer: 0 },
+                    { q: "'Hava durumu' programı hangisidir?", options: ["Weather forecast", "News", "Series", "Talk show"], answer: 0 },
+                    { q: "Tercih belirtirken kullanılan 'prefer' yapısı hangisidir?", options: ["I prefer documentaries to sitcoms.", "I prefer watch TV.", "I prefer to news.", "I prefer series than sitcoms."], answer: 0 },
+                    { q: "'Bence, benim fikrime göre' kalıbı nedir?", options: ["In my opinion", "I think so", "To me", "Hepsi"], answer: 3 },
+                    { q: "'Korkunç, sürükleyici değil' anlamına gelen olumsuz sıfat nedir?", options: ["Boring / Terrible", "Exciting", "Amusing", "Great"], answer: 0 }
+                ]
+            },
+            "Turkce": {
+                "1. Ünite: Sözcükte Anlam": [
+                    { q: "'Ağır' sözcüğü hangisinde mecaz anlamdadır?", options: ["Ağır sözler söyledi.", "Çanta çok ağırdı.", "Ağır yükü kaldırdı.", "Ağır taş hareket etmedi."], answer: 0 },
+                    { q: "Zıt anlamlı kelimeler hangi seçenekte verilmiştir?", options: ["Siyah - Beyaz", "Okul - Mektep", "Kırmızı - Al", "Yıl - Sene"], answer: 0 },
+                    { q: "Eş anlamlı sözcükler hangisidir?", options: ["Cevap - Yanıt", "Uzun - Kısa", "İyi - Kötü", "Var - Yok"], answer: 0 },
+                    { q: "Terim anlamlı sözcük hangisinde vardır?", options: ["Hakem penaltı noktasını gösterdi.", "Bugün hava çok güzel.", "Arkadaşıma mektup yazdım.", "Koyu renkleri severim."], answer: 0 },
+                    { q: "'Sıcak' kelimesinin somut anlamı hangisidir?", options: ["Sıcak çorba", "Sıcak karşılama", "Sıcak sohbet", "Sıcak kanlı"], answer: 0 },
+                    { q: "Eş sesli (sesteş) sözcük hangisidir?", options: ["Yüz (çehre / sayı / yüzmek)", "Kalem", "Kitap", "Defter"], answer: 0 },
+                    { q: "Yansıma sözcük hangisidir?", options: ["Pat", "Işık", "Renk", "Koku"], answer: 0 },
+                    { q: "Genelden özele sıralama hangisidir?", options: ["Varlık - Canlı - Bitki - Çiçek - Gül", "Gül - Çiçek - Bitki - Canlı", "Kitap - Sayfa - Harf", "Şehir - Ülke - Kıta"], answer: 0 },
+                    { q: "İkileme hangisinde farklı yolla kurulmuştur?", options: ["Eğri büğrü (Biri anlamlı biri anlamsız)", "Gece gündüz (Zıt)", "Ses seda (Eş anlam)", "Ağır ağır (Aynı sözcük)"], answer: 0 },
+                    { q: "Deyim açıklamasıyla eşleşmiştir hangisinde?", options: ["Göze girmek: Sevgisini kazanmak", "Etekleri tutuşmak: Çok sevinmek", "Kulağı kabarmak: Çok dinlemek", "Ağzı kulaklarına varmak: Çok korkmak"], answer: 0 }
+                ],
+                "2. Ünite: Cümlede Anlam": [
+                    { q: "Hangi cümlede 'amaç-sonuç' ilişkisi vardır?", options: ["Sınavı geçmek için çalıştı.", "Hava yağdığı için ıslandı.", "Geç kaldığı için kızdı.", "Yorulduğu için uyudu."], answer: 0 },
+                    { q: "Hangi cümle 'öznel' bir yargı bildirir?", options: ["Bu film çok sürükleyici.", "Türkiye 7 bölgedir.", "Kitap 200 sayfadır.", "Ankara başkenttir."], answer: 0 },
+                    { q: "Hangi cümlede 'sebep-sonuç' ilişkisi vardır?", options: ["Kar yağdığından yollar kapandı.", "Okumak üzere kütüphaneye gitti.", "Kazanmak için çabalıyor.", "İyi bir insan olmak için okuyor."], answer: 0 },
+                    { q: "Hangi cümlede 'koşul-sonuç' (şart) vardır?", options: ["Erken gelirsen sinemaya gideriz.", "Geç geldiği için özür diledi.", "Kitap okumayı çok sever.", "Okula otobüsle gidiyor."], answer: 0 },
+                    { q: "'Karşılaştırma' cümlesi hangisidir?", options: ["Ali, Ahmet'ten daha uzundur.", "Güneş doğdu.", "Yemek yedik.", "Ders çalışıyoruz."], answer: 0 },
+                    { q: "'Örtülü anlam' olan cümle hangisidir?", options: ["Toplantıya Ahmet de katıldı.", "Bugün hava güneşli.", "Ders saat 9'da başlıyor.", "Yarın pazar."], answer: 0 },
+                    { q: "'Abartma' (Mübalağa) cümlesi hangisidir?", options: ["Dünyalar kadar ödevim var.", "Biraz yoruldum.", "Çok acıktım.", "Biraz dinlenelim."], answer: 0 },
+                    { q: "'Varsayım' cümlesi hangisidir?", options: ["Tut ki sınavı kazandın...", "Sınav yarın yapılacak.", "Çok çalışmalısın.", "Keşke ben de gelseydim."], answer: 0 },
+                    { q: "'Pişmanlık' belirten cümle hangisidir?", options: ["Keşke derslerime daha çok çalışsaydım.", "Yarın sinemaya gidelim.", "Çok mutluyum.", "Hava çok soğuk."], answer: 0 },
+                    { q: "'Tasarım' (plan) cümlesi hangisidir?", options: ["Yazın tatilde Antalya'ya gitmeyi planlıyorum.", "Dün okula gittim.", "Kitabımı bitirdim.", "Ödevimi yaptım."], answer: 0 }
+                ],
+                "3. Ünite: Parçada Anlam": [
+                    { q: "Paragrafın ana düşüncesi ne demektir?", options: ["Yazarın iletmek istediği temel mesaj", "Paragrafın ilk cümlesi", "En uzun cümle", "Yazarın hayatı"], answer: 0 },
+                    { q: "Paragrafta 'yardımcı düşünce' nedir?", options: ["Ana düşünceyi destekleyen yan fikirler", "Paragrafın başlığı", "Son cümle", "Sadece örnekler"], answer: 0 },
+                    { q: "Anlatım biçimlerinden 'Betimleme' nedir?", options: ["Kelimelerle resim çizme sanatı", "Bir olayı anlatma", "Fikir savunma", "Bilgi verme"], answer: 0 },
+                    { q: "Anlatım biçimlerinden 'Öyküleme' nedir?", options: ["Olay, kişi, yer ve zaman bağlamında anlatım", "Resim çizer gibi anlatım", "Sadece bilgi verme", "Soru sorarak anlatım"], answer: 0 },
+                    { q: "Düşünceyi geliştirme yollarından 'Tanımlama' nedir?", options: ["'Bu nedir?' sorusunun cevabı olan cümle", "Örnek verme", "Sayısal veri kullanma", "Tanık gösterme"], answer: 0 }
+                ],
+                "4. Ünite: Fiiller (Eylemler)": [
+                    { q: "'Koşuyordu' fiilinin kipi ve zamanı nedir?", options: ["Şimdiki zamanın hikayesi", "Geniş zaman", "Gelecek zaman", "Görülen geçmiş zaman"], answer: 0 },
+                    { q: "Anlamlarına göre fiillerden 'İş (Kılış)' fiili hangisidir?", options: ["Onu okudu (Nesne alabilen)", "Büyüdü (Oluş)", "Sarardı (Oluş)", "Durdu (Durum)"], answer: 0 },
+                    { q: "Anlamlarına göre 'Oluş' fiili hangisidir?", options: ["Sararmak / Büyümek", "Yazmak", "Okumak", "Koşmak"], answer: 0 },
+                    { q: "Fiilde zaman (kip) kayması olan cümle hangisidir?", options: ["Yarın Ankara'ya gidiyorum. (Gideceğim yerine)", "Dün okula gittim.", "Şimdi ders çalışıyorum.", "Her gün koşarım."], answer: 0 },
+                    { q: "Dilek kiplerinden 'Gereklilik kipi' eki nedir?", options: ["-mali / -meli", "-sa / -se", "-e / -a", "Eki yoktur (Emir)"], answer: 0 }
+                ],
+                "5. Ünite: Zarflar ve Yazım Kuralları": [
+                    { q: "'Çocuk hızlıca koştu' cümlesinde 'hızlıca' ne tür zarftır?", options: ["Durum zarfı", "Zaman zarfı", "Miktar zarfı", "Yer-yön zarfı"], answer: 0 },
+                    { q: "'Dün okula gelmedi' cümlesinde 'dün' ne tür zarftır?", options: ["Zaman zarfı", "Durum zarfı", "Miktar zarfı", "Soru zarfı"], answer: 0 },
+                    { q: "'Çok çalıştı' cümlesinde 'çok' ne tür zarftır?", options: ["Miktar (Azlık-Çokluk) zarfı", "Durum zarfı", "Zaman zarfı", "Yer-yön zarfı"], answer: 0 },
+                    { q: "Yer-yön zarfları ek aldığında (örn: aşağıya) ne olur?", options: ["İsimleşir (Zarf olmaktan çıkar)", "Yine zarf kalır", "Sıfat olur", "Zamir olur"], answer: 0 },
+                    { q: "Yazımı doğru olan sözcük hangisidir?", options: ["Rastgele", "Traş", "Yalnış", "Yalnızca"], answer: 0 }
+                ]
+            },
+            "Sosyal": {
+                "1. Ünite: Birey ve Toplum": [
+                    { q: "İletişimde kişiyi suçlamayan, kendi duygusunu belirten dile ne denir?", options: ["Ben Dili", "Sen Dili", "Kaba Dil", "Resmi Dil"], answer: 0 },
+                    { q: "Empati nedir?", options: ["Kendini başkasının yerine koymak", "Sempatik olmak", "Bencillik etmek", "Suskun kalmak"], answer: 0 },
+                    { q: "Etkili dinleyicinin yapması gereken davranış hangisidir?", options: ["Göz teması kurmak ve dinlemek", "Söz kesmek", "Telefonla oynamak", "Arkayı dönmek"], answer: 0 },
+                    { q: "Medya okuryazarlığı nedir?", options: ["Medya iletilerini doğru değerlendirme becerisi", "Televizyon izlemek", "Gazete satmak", "Sosyal medyada paylaşım yapmak"], answer: 0 },
+                    { q: "Anayasamızın 20. maddesiyle güvenceye alınan hak hangisidir?", options: ["Özel hayatın gizliliği", "Yerleşme hürriyeti", "Seyahat hürriyeti", "Eğitim hakkı"], answer: 0 }
+                ],
+                "2. Ünite: Kültür ve Miras (Osmanlı)": [
+                    { q: "Osmanlı Devleti'nin kurucusu kimdir?", options: ["Osman Bey", "Orhan Bey", "Ertuğrul Gazi", "Fatih Sultan"], answer: 0 },
+                    { q: "İstanbul'u fethederek Çağ kapatıp Çağ açan Osmanlı padişahı kimdir?", options: ["Fatih Sultan Mehmet", "Kanuni", "Yavuz", "2. Abdülhamid"], answer: 0 },
+                    { q: "Osmanlı'nın fethettiği yerlerde izlediği hoşgörü politikasına ne denir?", options: ["İstimalet Politikası", "İskan Politikası", "Devşirme", "Tımar"], answer: 0 },
+                    { q: "Fethedilen yerlere Türkmenlerin yerleştirilmesi politikasına ne denir?", options: ["İskan Politikası", "İstimalet", "Gaza", "Cihat"], answer: 0 },
+                    { q: "Osmanlı'da eyalet askerlerinin yetiştirildiği toprak sistemine ne denir?", options: ["Tımar Sistemi", "Devşirme", "Enderun", "Lonca"], answer: 0 }
+                ],
+                "3. Ünite: İnsanlar, Yerler ve Çevre": [
+                    { q: "Bir km²'ye düşen insan sayısına ne denir?", options: ["Nüfus yoğunluğu", "Nüfus artış hızı", "Doğal nüfus", "Göç oranı"], answer: 0 },
+                    { q: "Türkiye'de nüfusun en yoğun olduğu bölge hangisidir?", options: ["Marmara Bölgesi", "İç Anadolu", "Doğu Anadolu", "Karadeniz"], answer: 0 },
+                    { q: "Nüfusun dağılışını etkileyen 'beşeri' faktör hangisidir?", options: ["Sanayi ve Ticaret", "İklim", "Yeryüzü şekilleri", "Su kaynakları"], answer: 0 },
+                    { q: "Nüfusun dağılışını etkileyen 'doğal' faktör hangisidir?", options: ["İklim ve Yerşekilleri", "Sanayi", "Ulaşım", "Turizm"], answer: 0 },
+                    { q: "Beyin göçü ne demektir?", options: ["Eğitimli/Vasıflı insanların yurtdışına gitmesi", "Köyden kente göç", "Mevsimlik göç", "Mübadele"], answer: 0 }
+                ],
+                "4. Ünite: Bilim, Teknoloji ve Toplum": [
+                    { q: "Tarihte bilinen ilk yazıyı kimler bulmuştur?", options: ["Sümerler (Çivi Yazısı)", "Mısırlılar", "Fenikeliler", "Yunanlar"], answer: 0 },
+                    { q: "Günümüz alfabesinin temelini atan uygarlık hangisidir?", options: ["Fenikeliler", "Sümerler", "Mısırlılar", "Babiller"], answer: 0 },
+                    { q: "Matbaayı geliştirerek kitapların ucuza basılmasını sağlayan kimdir?", options: ["Gutenberg", "Galileo", "Newton", "Copernicus"], answer: 0 },
+                    { q: "Dünyanın yuvarlak olduğunu bilimsel olarak ispatlayan denizci kimdir?", options: ["Magellan / Del Cano", "Kristof Kolomb", "Vasco da Gama", "Marco Polo"], answer: 0 },
+                    { q: "Cebir biliminin kurucusu olan Müslüman matematikçi kimdir?", options: ["Harezmi", "İbni Sina", "Biruni", "Farabi"], answer: 0 }
+                ],
+                "5. Ünite: Üretim, Dağıtım ve Tüketim": [
+                    { q: "Toprağın işlenmesi ve ürün elde edilmesine ne denir?", options: ["Tarım", "Sanayi", "Hizmet sektörü", "Madencilik"], answer: 0 },
+                    { q: "Osmanlı'daki esnaf dayanışma teşkilatına ne denir?", options: ["Ahilik Teşkilatı / Lonca", "Tımar", "Enderun", "Divan"], answer: 0 },
+                    { q: "Mesleki eğitim veren Osmanlı okuluna ne ad verilir?", options: ["Enderun / Medrese", "Tımar", "Lonca", "Sıbyan mektebi"], answer: 0 },
+                    { q: "Sanayi İnkılabı ilk olarak hangi ülkede başlamıştır?", options: ["İngiltere", "Fransa", "Almanya", "ABD"], answer: 0 },
+                    { q: "Sanayi İnkılabı ile insan ve hayvan gücünün yerini ne almıştır?", options: ["Buhar gücü ve makineler", "Rüzgar gücü", "Güneş enerjisi", "Elektrik"], answer: 0 }
+                ]
+            }
+        };
+
+        let currentSubject = "";
+        let currentTopic = "";
+        let currentQuestions = [];
+        let qIndex = 0;
+        let score = 0;
+        let timer = null;
+        let timeLeft = 15;
+
+        function showScreen(screenId) {
+            document.getElementById('subjectScreen').style.display = 'none';
+            document.getElementById('topicScreen').style.display = 'none';
+            document.getElementById('quizScreen').style.display = 'none';
+            document.getElementById(screenId).style.display = 'block';
+            if(screenId === 'subjectScreen') updateLeaderboardUI();
+        }
+
+        function selectSubject(sub) {
+            currentSubject = sub;
+            document.getElementById('topicScreenTitle').innerText = sub + " Tüm Yıl Üniteleri";
+            let list = document.getElementById('topicList');
+            list.innerHTML = "";
+
+            let topics = Object.keys(db[sub] || {});
+            topics.forEach(t => {
+                let btn = document.createElement('button');
+                btn.className = 'topic-btn';
+                btn.innerHTML = `<span>${t}</span> <i class="fa-solid fa-play" style="color:var(--accent-blue)"></i>`;
+                btn.onclick = () => startQuiz(t);
+                list.appendChild(btn);
+            });
+
+            showScreen('topicScreen');
+        }
+
+        function startQuiz(topic) {
+            currentTopic = topic;
+            currentQuestions = db[currentSubject][topic];
+            qIndex = 0;
+            score = 0;
+            document.getElementById('timerBg').style.display = 'block';
+            showScreen('quizScreen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if(qIndex >= currentQuestions.length) {
+                finishQuiz();
+                return;
+            }
+
+            let item = currentQuestions[qIndex];
+            document.getElementById('questionTitle').innerText = `${qIndex + 1}. ${item.q}`;
+            let grid = document.getElementById('optionsGrid');
+            grid.innerHTML = "";
+
+            item.options.forEach((opt, idx) => {
+                let btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `${String.fromCharCode(65 + idx)}) ${opt}`;
+                btn.onclick = () => checkAnswer(idx, btn);
+                grid.appendChild(btn);
+            });
+
+            resetTimer();
+            updateStats();
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            timeLeft = 15;
+            document.getElementById('timerText').innerText = timeLeft;
+            document.getElementById('timerBar').style.width = '100%';
+
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerText').innerText = timeLeft;
+                document.getElementById('timerBar').style.width = (timeLeft / 15 * 100) + '%';
+
+                if(timeLeft <= 0) {
+                    clearInterval(timer);
+                    playSound(150, 'sawtooth', 0.4);
+                    checkAnswer(-1, null);
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(selectedIdx, btnElement) {
+            clearInterval(timer);
+            let item = currentQuestions[qIndex];
+            let allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+            if(selectedIdx === item.answer) {
+                if(btnElement) btnElement.classList.add('correct');
+                score += 10 + timeLeft;
+                playSound(600, 'sine', 0.2);
+            } else {
+                if(btnElement) btnElement.classList.add('wrong');
+                allBtns[item.answer].classList.add('correct');
+                playSound(180, 'square', 0.3);
+            }
+
+            updateStats();
+
+            setTimeout(() => {
+                qIndex++;
+                loadQuestion();
+            }, 1400);
+        }
+
+        function finishQuiz() {
+            clearInterval(timer);
+            document.getElementById('timerBg').style.display = 'none';
+            let name = prompt(`Tebrikler! ${currentTopic} bitti.\nToplam Skorun: ${score}\nAdını Liderlik Tahtasına Yaz:`);
+            if(name) {
+                saveScore(name, score);
+            }
+            showScreen('subjectScreen');
+        }
+
+        function quitQuiz() {
+            clearInterval(timer);
+            document.getElementById('timerBg').style.display = 'none';
+            showScreen('topicScreen');
+        }
+
+        function updateStats() {
+            document.getElementById('scoreText').innerText = score;
+            document.getElementById('qCountText').innerText = `${qIndex + 1}/${currentQuestions ? currentQuestions.length : 0}`;
+        }
+
+        function saveScore(name, score) {
+            let leaderboard = JSON.parse(localStorage.getItem('7b_scores_full') || '[]');
+            leaderboard.push({ name, score, subject: currentSubject });
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 5);
+            localStorage.setItem('7b_scores_full', JSON.stringify(leaderboard));
+            updateLeaderboardUI();
+        }
+
+        function updateLeaderboardUI() {
+            let leaderboard = JSON.parse(localStorage.getItem('7b_scores_full') || '[]');
+            let list = document.getElementById('leaderboardList');
+            if(leaderboard.length === 0) {
+                list.innerHTML = "<div style='font-size:0.8rem; color:#64748b;'>Henüz skor yok. İlk sen ol!</div>";
+                return;
+            }
+            list.innerHTML = leaderboard.map((item, index) => 
+                `<div class="leaderboard-item">
+                    <span><b>${index + 1}. ${item.name}</b> (${item.subject})</span>
+                    <span style="color:var(--accent-gold); font-weight:bold;">${item.score} Puan</span>
+                </div>`
+            ).join('');
+        }
+
+        updateLeaderboardUI();
+    </script>
+</body>
+</html>
